@@ -52,6 +52,7 @@ function prepare_ports() {
 		ports[i]['model'] = config.model[i];
 		ports[i]['lock'] = locks.createReadWriteLock();
 		ports[i]['initialized'] = false;
+		ports[i]['iccid'] = 0;
 		ports[i]['port'] = new SerialPort(ports[i]['path'], {
 			baudRate: ports[i]['baud'],
 			autoOpen: false
@@ -77,6 +78,8 @@ function prepare_ports() {
 		}.bind({ port: ports[i] }));
 		
 		ports_map[ports[i]['name']] = ports[i];
+		
+		ports[i]['read_timer'] = setInterval(periodic_check, 1000, ports[i]);
 	}
 }
 
@@ -86,29 +89,41 @@ function incoming_data(port, data) {
 		log.print(`Received: START_${response}_END`);
 	if(response.indexOf("+CMTI:") !== -1) {
 		pos = response.split(',')[1];
-		modem.read(port['port'], pos, function(err, result) {
-			log.print(`SMS Received: from ${result.sender}, message: ${result.message}`, `Device: ${port['name']}`);
+		port['lock'].writeLock(function () {
+			modem.read(port['port'], pos, function(err, result) {
+				log.print(`SMS Received: from ${result.sender}, message: ${result.message}`, `Device: ${port['name']}`, '+CMTI');
+				port['lock'].unlock();
+			});
 		});
 	}
 	if(response.indexOf("+CMT:") !== -1) {
 		var sms = modem.parsesms(response);
-		log.print(`SMS Received: from ${sms.sender}, message: ${sms.message}`, `Device: ${port['name']}`);
+		log.print(`SMS Received: from ${sms.sender}, message: ${sms.message}`, `Device: ${port['name']}`, '+CMT');
 		http_callback(port, sms.sender, sms.message);
 	}
 	if(response.indexOf("+CMGL:") !== -1) {
 		var sms = modem.parsemulti(response);
 		for(var i = 0; i < sms.length; i++) {
-			log.print(`SMS Received: from ${sms[i].sender}, message: ${sms[i].message}`, `Device: ${port['name']}`);
+			log.print(`SMS Received: from ${sms[i].sender}, message: ${sms[i].message}`, `Device: ${port['name']}`, '+CMGL');
 		}
 		http_callback(port, sms.sender, sms.message);
 	}
 }
 
-function period_check() {
-	response = await f_write(port, 'AT+CMGF=0\r', true);
-	response = await f_write(port, `AT+CMGL=${stat}\r`, true, null);
-	// Delete all read or sent
-	modem.delete(port, 0, 2);	
+async function periodic_check(port) {
+	if(!port['initialized'])
+		return;
+
+	if(port['lock'].tryWriteLock()) {
+		log.print(`Reading messages from memory.`, `Device: ${port['name']}`);
+		response = await modem.write(port['port'], 'AT+CMGF=0\r', true);
+		response = await modem.write(port['port'], `AT+CMGL=0\r`, true, null);
+		// Delete all read or sent
+		await modem.delete(port['port'], 0, 2);
+		port['lock'].unlock();
+	} else {
+		log.print(`Cannot get the lock, not reading messages.`, `Device: ${port['name']}`);
+	}
 }
 
 function http_callback(port, sender, message) {
@@ -153,7 +168,8 @@ http.createServer(function(req, res) {
 					baud: ports[i]['baud'],
 					model: ports[i]['model'],
 					opened: ports[i]['opened'],
-					initialized: ports[i]['initialized']
+					initialized: ports[i]['initialized'],
+					iccid: ports[i]['iccid']
 				};
 			}
 		}

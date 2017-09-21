@@ -170,6 +170,13 @@ var f_initialization = async function(port) {
 			}
 		}
 	} while(failure && ++retry < config.initialize_retry);
+	
+	var iccid = '';
+	iccid = await f_write(port['port'], 'AT^ICCID?\r', true);
+	iccid = /([0-9]{10,})/.exec(iccid.trim())
+	if(iccid)
+		iccid = iccid[1];
+	port['iccid'] = iccid;
 
 	if(!failure) {
 		port['initialized'] = true;
