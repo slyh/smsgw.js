@@ -2,7 +2,6 @@ var config = require('./config');
 
 var path = require('path');
 var parent_name = path.basename(module.parent.filename);
-var datetime = require('node-datetime').create().format('Y-m-d H:M:S');
 
 var fs = require('fs');
 var util = require('util');
@@ -14,6 +13,7 @@ var log_name = config.log_location + require('node-datetime').create().format('Y
 var log_file = fs.createWriteStream(log_name, {flags : 'w'});
 
 var f_print = function(msg) {
+	var datetime = require('node-datetime').create().format('Y-m-d H:M:S');
 	var info = "";
 	for (i = 1; i < arguments.length; i++) {
 		info += `[${arguments[i]}]`;
@@ -23,4 +23,7 @@ var f_print = function(msg) {
 	log_file.write(`${log}\n`);
 }
 
-m
+module.exports = {
+	print: f_print,
+	datetime: datetime
+};
