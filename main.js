@@ -129,6 +129,7 @@ async function periodic_check(port) {
 function http_callback(port, sender, message) {
 	var post = {
 		device: port['name'],
+		iccid: port['iccid'],
 		sender: sender,
 		message: message
 	};
