@@ -2,7 +2,7 @@ var log = require('./log');
 
 var config = module.exports = {
 	listen: 8080,
-	callback: 'http://127.0.0.1/callback.php',
+	callback: 'http://localhost/sms/smsgwjs.php',
 	name: [ 'E3372_1', 'E3372_2' ],
 	path: [ '/dev/ttyUSB0', '/dev/ttyUSB1' ],
 	baud: [ 115200, 115200 ],

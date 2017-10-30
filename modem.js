@@ -63,7 +63,10 @@ var f_parsesms = function(data) {
 	message = data.trim().split('\r');
 	if(!message)
 		message = data.trim().split('\n');
-	message = message[1].trim();
+	if(message.length > 1)
+		message = message[1].trim();
+	else
+		message = message[0].trim();
 
 	if(/^[0-9a-fA-F]*$/.test(message)) {
 		if(config.verbose > 0)
@@ -173,7 +176,7 @@ var f_initialization = async function(port) {
 	
 	var iccid = '';
 	iccid = await f_write(port['port'], 'AT^ICCID?\r', true);
-	iccid = /([0-9]{10,})/.exec(iccid.trim())
+	iccid = /([0-9F]{10,})/.exec(iccid.trim())
 	if(iccid)
 		iccid = iccid[1];
 	port['iccid'] = iccid;

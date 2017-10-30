@@ -93,6 +93,7 @@ function incoming_data(port, data) {
 			modem.read(port['port'], pos, function(err, result) {
 				log.print(`SMS Received: from ${result.sender}, message: ${result.message}`, `Device: ${port['name']}`, '+CMTI');
 				port['lock'].unlock();
+				http_callback(port, result.sender, result.message);
 			});
 		});
 	}
@@ -105,8 +106,8 @@ function incoming_data(port, data) {
 		var sms = modem.parsemulti(response);
 		for(var i = 0; i < sms.length; i++) {
 			log.print(`SMS Received: from ${sms[i].sender}, message: ${sms[i].message}`, `Device: ${port['name']}`, '+CMGL');
+			http_callback(port, sms[i].sender, sms[i].message);
 		}
-		http_callback(port, sms.sender, sms.message);
 	}
 }
 
@@ -133,7 +134,7 @@ function http_callback(port, sender, message) {
 		sender: sender,
 		message: message
 	};
-	request({url: config.callback, form: post}, function (error, response, body) {
+	request.post({url: config.callback, form: post}, function (error, response, body) {
 		if(error)
 			log.print(`HTTP callback failed. Error: ${error} Post content: ${post}`, `Device: ${port['name']}`)
 		else

@@ -24,6 +24,5 @@ var f_print = function(msg) {
 }
 
 module.exports = {
-	print: f_print,
-	datetime: datetime
+	print: f_print
 };
