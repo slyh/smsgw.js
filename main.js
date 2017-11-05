@@ -91,8 +91,8 @@ function incoming_data(port, data) {
 		pos = response.split(',')[1];
 		port['lock'].writeLock(function () {
 			modem.read(port['port'], pos, function(err, result) {
-				log.print(`SMS Received: from ${result.sender}, message: ${result.message}`, `Device: ${port['name']}`, '+CMTI');
 				port['lock'].unlock();
+				log.print(`SMS Received: from ${result.sender}, message: ${result.message}`, `Device: ${port['name']}`, '+CMTI');
 				http_callback(port, result.sender, result.message);
 			});
 		});
@@ -116,7 +116,8 @@ async function periodic_check(port) {
 		return;
 
 	if(port['lock'].tryWriteLock()) {
-		log.print(`Reading messages from memory.`, `Device: ${port['name']}`);
+		if(config.verbose > 0)
+			log.print(`Reading messages from memory.`, `Device: ${port['name']}`);
 		response = await modem.write(port['port'], 'AT+CMGF=0\r', true);
 		response = await modem.write(port['port'], `AT+CMGL=0\r`, true, null);
 		// Delete all read or sent
@@ -135,6 +136,9 @@ function http_callback(port, sender, message) {
 		message: message
 	};
 	request.post({url: config.callback, form: post}, function (error, response, body) {
+		if(config.verbose == 0)
+			return;
+
 		if(error)
 			log.print(`HTTP callback failed. Error: ${error} Post content: ${post}`, `Device: ${port['name']}`)
 		else

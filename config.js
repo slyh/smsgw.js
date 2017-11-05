@@ -2,11 +2,11 @@ var log = require('./log');
 
 var config = module.exports = {
 	listen: 8080,
-	callback: 'http://localhost/sms/smsgwjs.php',
-	name: [ 'E3372_1', 'E3372_2' ],
-	path: [ '/dev/ttyUSB0', '/dev/ttyUSB1' ],
-	baud: [ 115200, 115200 ],
-	model: [ 'E3372', 'E3372' ],
+	callback: 'http://localhost/sms/Ja3HO/smsgwjs.php',
+	name: [ 'E3372_0', 'E3372_1', 'E3372_2', 'E3372_3', 'E3372_4', 'E3372_5', 'E3372_6', 'E3372_7', 'E3372_8', 'E3372_9' ],
+	path: [ '/dev/ttyUSB0', '/dev/ttyUSB1', '/dev/ttyUSB2', '/dev/ttyUSB3', '/dev/ttyUSB4', '/dev/ttyUSB5', '/dev/ttyUSB6', '/dev/ttyUSB7', '/dev/ttyUSB8', '/dev/ttyUSB9' ],
+	baud: [ 115200, 115200, 115200, 115200, 115200, 115200, 115200, 115200, 115200, 115200 ],
+	model: [ 'E3372', 'E3372', 'E3372', 'E3372', 'E3372', 'E3372', 'E3372', 'E3372', 'E3372', 'E3372' ],
 	initialize_command: {
 		E3372: [ 'AT^CURC=0\r', 'AT+CREG=0\r', 'AT+CNMI=1,3,0,0,0\r', 'AT+CMGF=1\r' ]
 	},

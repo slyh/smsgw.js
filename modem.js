@@ -155,6 +155,7 @@ var f_write = function(port, command, response, finished) {
 };
 
 var f_initialization = async function(port) {
+	await f_write(port['port'], 'AT\r', true);
 	var failure = false, retry = 0;
 	do {
 		failure = false;
