@@ -1,3 +1,13 @@
+# Setup #
+
+Dependencies:
+
+npm install serialport pdu http url request locks node-datetime
+
+# Usage #
+
+Run main.js
+
 # README #
 
 This README would normally document whatever steps are necessary to get your application up and running.
@@ -10,8 +20,6 @@ This README would normally document whatever steps are necessary to get your app
 
 ### How do I get set up? ###
 
-Dependencies:
-npm install serialport pdu http url request locks node-datetime
 * Summary of set up
 * Configuration
 * Dependencies
