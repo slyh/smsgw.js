@@ -104,6 +104,10 @@ var f_send = function(port, to, message, repeat, finished) {
 					response = await f_write(port, `AT+CMGS="${to}"\r`, true);
 					clean_response = response.replace(/\W/g, '');
 					log.print(`AT+CMGS Response: ${clean_response}`, `Device: ${port.path}`);
+					if(response.indexOf('ERROR') !== -1) {
+						repeat--;
+						continue;
+					}
 					response = await f_write(port, message + String.fromCharCode(26), true);
 					clean_response = response.replace(/\W/g, '');
 					log.print(`Send SMS Result: ${clean_response}`, `Device: ${port.path}`);
