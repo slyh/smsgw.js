@@ -1,0 +1,28 @@
+{
+  "name": "smsgw",
+  "version": "1.0.0",
+  "description": "Dependencies:",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/slyh/smsgw.js.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/slyh/smsgw.js/issues"
+  },
+  "homepage": "https://github.com/slyh/smsgw.js#readme",
+  "dependencies": {
+    "http": "0.0.1-security",
+    "locks": "^0.2.2",
+    "node-datetime": "^2.1.2",
+    "pdu": "^1.1.0",
+    "request": "^2.88.2",
+    "serialport": "^9.0.7",
+    "url": "^0.11.0"
+  }
+}

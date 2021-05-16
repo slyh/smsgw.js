@@ -1,39 +1,79 @@
-# Setup #
+**This project is not in development and considered to be unstable for production.**
 
-Dependencies:
+smsgw.js is an SMS gateway which allows applications to send and receive SMS messages with a set of HTTP API. The project is only tested with Huawei E3372s but generally should work with modems that support GSM AT commands with serial interface.
 
-npm install serialport pdu http url request locks node-datetime
+## Known issues
+* The serial port locks up after a period of usage.
 
-# Usage #
+## API
 
-Run main.js
+### Send messages
 
-# README #
+Send a GET request to `/` with queries listed below.
 
-This README would normally document whatever steps are necessary to get your application up and running.
+Example: `/?action=send&device=E3372_1&to=85261234567&message=test`
 
-### What is this repository for? ###
+Name | Value
+-----|------
+action | `send`
+device | Name of the GSM modem in `config.js`.
+to | Recipient's phone number.
+message | Content of the SMS message.
 
-* Quick summary
-* Version
-* [Learn Markdown](https://bitbucket.org/tutorials/markdowndemo)
+### Retrieve status of modems
 
-### How do I get set up? ###
+Send a GET request to `/` with queries listed below.
 
-* Summary of set up
-* Configuration
-* Dependencies
-* Database configuration
-* How to run tests
-* Deployment instructions
+Example: `/?action=status&device=E3372_1`
 
-### Contribution guidelines ###
+Name | Value
+-----|------
+action | `status`
+device | Name of the GSM modem in `config.js`. (optional)
 
-* Writing tests
-* Code review
-* Other guidelines
+### Reset a modem
 
-### Who do I talk to? ###
+Send a GET request to `/` with queries listed below.
 
-* Repo owner or admin
-* Other community or team contact
+Example: `/?action=reset&device=E3372_1`
+
+Name | Value
+-----|------
+action | `reset`
+device | Name of the GSM modem in `config.js`.
+
+### Send USSD codes
+
+Send a GET request to `/` with queries listed below.
+
+Example: `/?action=ussd&device=E3372_1&command=*#1234#`
+
+Name | Value
+-----|------
+action | `ussd`
+device | Name of the GSM modem in `config.js`.
+command | The USSD code you could like to send.
+
+### Get unread messages
+
+Send a GET request to `/` with queries listed below.
+
+Example: `/?action=readall&device=E3372_1`
+
+Name | Value
+-----|------
+action | `readall`
+device | Name of the GSM modem in `config.js`.
+
+### Callback for incoming messages
+
+Set the callback URL in `config.js`.
+
+It should expect a POST request with the following form data.
+
+Name | Value
+-----|------
+device | Modem that received this message.
+iccid | ICCID of the SIM card inside this modem.
+sender | Sender of this message.
+message | Content of the SMS message.
